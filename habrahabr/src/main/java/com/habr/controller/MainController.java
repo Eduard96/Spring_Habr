@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
     @GetMapping
-    public String habr() {
-        return "hi";
+    public String getHabrahabr() {
+        return "habrahabr";
     }
 }
