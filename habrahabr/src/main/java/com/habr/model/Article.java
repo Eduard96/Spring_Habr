@@ -1,9 +1,11 @@
 package com.habr.model;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
-@Table
+@Table(name = "article")
 public class Article {
 
     @Id
@@ -11,16 +13,66 @@ public class Article {
     private Long id;
 
     @Column
-    private String articleName;
-    @Column
-    private String articleAuthor;
-    @Column
-    private Long numberOfViews;
-    @Column
-    private String articlePath;
-    @ManyToOne
+    private String title;
+
+    @Column(name = "publication_date",columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date publicationDate;
+
+    @Column(name = "article_content",columnDefinition = "text")
+    private String articleContent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Set<ReactionCounter> reactionCounter;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public String getArticleContent() {
+        return articleContent;
+    }
+
+    public void setArticleContent(String articleContent) {
+        this.articleContent = articleContent;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Set<ReactionCounter> getReactionCounter() {
+        return reactionCounter;
+    }
+
+    public void setReactionCounter(Set<ReactionCounter> reactionCounter) {
+        this.reactionCounter = reactionCounter;
+    }
 }

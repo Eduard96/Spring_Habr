@@ -1,14 +1,18 @@
 package com.habr.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import javax.xml.crypto.Data;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table
+@Table(name = "user")
 public class User {
 
     @Id
@@ -19,32 +23,44 @@ public class User {
     @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
     @Column
     private String name;
+
     @NotEmpty
     @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
     @Column
-    private String lastname;
+    private String surname;
+
     @NotEmpty
     @Size(min = 5, max = 30, message = "Should be more than 5 and less than 30")
     @Column(unique = true)
     private String nickname;
+
+    @NotEmpty
     @Email
     @Column (unique = true)
     private String email;
-    @NotEmpty
-    @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
-    @Column(unique = true)
-    private String login;
+
     @NotEmpty
     @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
     @Column
     private String password;
-    @Column
-    private Integer followers;
-    @Column
-    private Integer following;
 
-    @OneToMany
+    @Column(name = "email_verified")
+    private Boolean emailVerified;
+
+    @Column(name = "creation_date",columnDefinition="DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+
+    @ManyToMany(mappedBy = "followers")
+    private Set<User> following;
+    @ManyToMany
+    private Set<User> followers;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<Article> articles;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {
         return id;
@@ -60,14 +76,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
     }
 
     public String getNickname() {
@@ -86,14 +94,6 @@ public class User {
         this.email = email;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -102,27 +102,59 @@ public class User {
         this.password = password;
     }
 
-    public Integer getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(Integer followers) {
-        this.followers = followers;
-    }
-
-    public Integer getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(Integer following) {
-        this.following = following;
-    }
-
     public Set<Article> getArticles() {
         return articles;
     }
 
     public void setArticles(Set<Article> articles) {
         this.articles = articles;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Set<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<User> following) {
+        this.following = following;
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
+    }
+
+    public Set<ReactionCounter> getReactionCounter() {
+        return reactionCounter;
+    }
+
+    public void setReactionCounter(Set<ReactionCounter> reactionCounter) {
+        this.reactionCounter = reactionCounter;
     }
 }

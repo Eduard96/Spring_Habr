@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -29,7 +30,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan("com.habr")
 @PropertySource("classpath:hibernate.properties")
-//@EnableJpaRepositories
+@EnableJpaRepositories("com.habr.repository")
 @EnableWebMvc
 public class HabrAppConfig implements WebMvcConfigurer {
 
