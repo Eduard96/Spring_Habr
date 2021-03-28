@@ -20,8 +20,8 @@ public class RegistrationAndAuthorisationService {
         this.userRepository = userRepository;
     }
 
-    public void persist(User user) {
-        user.setCreationDate(new Timestamp(new Date().getTime()));
-        userRepository.save(user);
-    }
+//    public void persist(User user) {
+//        user.setCreationDate(new Timestamp(new Date().getTime()));
+//        userRepository.save(user);
+//    }
 }

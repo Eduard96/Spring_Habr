@@ -1,81 +1,53 @@
-package com.habr.model;
+package com.habr.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.habr.model.Article;
+import com.habr.model.ReactionCounter;
+import com.habr.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-@Entity
-@Table(name = "user")
-public class User {
+public class UserDTO implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
-    @Column
     private String name;
 
-    @NotEmpty
-    @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
-    @Column
     private String surname;
 
-    @NotEmpty
-    @Size(min = 5, max = 30, message = "Should be more than 5 and less than 30")
-    @Column(unique = true)
     private String nickname;
 
-    @NotEmpty
-    @Email
-    @Column (unique = true)
     private String email;
 
 
-    @NotEmpty 
-    @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column
     private String password;
 
-    
-    @Column(name = "email_verified")
     private Boolean emailVerified;
 
-    
-    @Column(name = "creation_date",columnDefinition="DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
-    private Set<User> following;
+    private Set<UserDTO> following;
 
-    @Transient
     private int followingNumber;
 
     
-    @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> followers;
 
-    @Transient
     private int followersNumber;
 
     
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<Article> articles;
 
     @Transient
     private int articlesNumber;
 
     
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {
@@ -118,6 +90,14 @@ public class User {
         this.password = password;
     }
 
+    public Set<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
+    }
+
     public String getSurname() {
         return surname;
     }
@@ -142,17 +122,15 @@ public class User {
         this.creationDate = creationDate;
     }
 
-    @JsonIgnore
-    public Set<User> getFollowing() {
+    public Set<UserDTO> getFollowing() {
         return following;
     }
 
-    public void setFollowing(Set<User> following) {
+    public void setFollowing(Set<UserDTO> following) {
         this.following = following;
         followingNumber = this.following.size();
     }
 
-    @JsonIgnore
     public Set<User> getFollowers() {
         return followers;
     }
@@ -162,16 +140,6 @@ public class User {
         followersNumber = this.followers.size();
     }
 
-    @JsonIgnore
-    public Set<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(Set<Article> articles) {
-        this.articles = articles;
-    }
-
-    @JsonIgnore
     public Set<ReactionCounter> getReactionCounter() {
         return reactionCounter;
     }
@@ -193,3 +161,4 @@ public class User {
         return articles.size();
     }
 }
+

@@ -3,13 +3,11 @@ package com.habr.controller;
 import com.habr.model.User;
 import com.habr.services.RegistrationAndAuthorisationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -46,10 +44,11 @@ public class RegistrationAndAuthenticationController {
 //        return "true";
 //    }
 
-    @PostMapping("/reg_success")
-    public String reg(@ModelAttribute @Valid User user, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) return "registration_and_authentication/reg_page";
-        regAndAuthService.persist(user);
-        return "redirect:/habrahabr";
+    @PostMapping(value = "/reg_success")
+    @ResponseBody
+    public User reg( @RequestBody User user) {
+        //if(bindingResult.hasErrors()) return "registration_and_authentication/reg_page";
+        //regAndAuthService.persist(user);
+        return user;
     }
 }

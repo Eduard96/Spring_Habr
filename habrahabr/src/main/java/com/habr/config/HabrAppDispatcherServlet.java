@@ -30,6 +30,6 @@ public class HabrAppDispatcherServlet extends AbstractAnnotationConfigDispatcher
 
     private void registerHiddenFieldFilter(ServletContext servletContext) {
         servletContext.addFilter("hiddenHttpMethodFilter",
-                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
+                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/");
     }
 }

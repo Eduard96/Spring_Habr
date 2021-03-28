@@ -1,6 +1,7 @@
 package com.habr.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ReactionCounterPK implements Serializable {
 
@@ -39,5 +40,18 @@ public class ReactionCounterPK implements Serializable {
 
     public void setReactionId(Long reactionId) {
         this.reactionId = reactionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReactionCounterPK that = (ReactionCounterPK) o;
+        return articleId.equals(that.articleId) && userId.equals(that.userId) && reactionId.equals(that.reactionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(articleId, userId, reactionId);
     }
 }
