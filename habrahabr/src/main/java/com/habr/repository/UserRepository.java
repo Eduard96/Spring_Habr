@@ -1,6 +1,7 @@
 package com.habr.repository;
 
 import com.habr.dto.UserDTO;
+import com.habr.model.Followers;
 import com.habr.model.User;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
     User findDistinctById(Long id);
+
+    List<Followers> findAllByFollowingId(Long following_id);
 
     //User getDistinctById(Long id);
 

@@ -45,24 +45,24 @@ public class User {
     @Column
     private String password;
 
-    
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "email_verified")
     private Boolean emailVerified;
 
-    
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "creation_date",columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
-    private Set<User> following;
+    @OneToMany(mappedBy = "following", fetch = FetchType.EAGER)
+    private Set<Followers> following;
 
     @Transient
     private int followingNumber;
 
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<User> followers;
+    @OneToMany(mappedBy = "followers", fetch = FetchType.EAGER)
+    private Set<Followers> followers;
 
     @Transient
     private int followersNumber;
@@ -143,23 +143,23 @@ public class User {
     }
 
     @JsonIgnore
-    public Set<User> getFollowing() {
+    public Set<Followers> getFollowing() {
         return following;
     }
 
-    public void setFollowing(Set<User> following) {
+    public void setFollowing(Set<Followers> following) {
         this.following = following;
-        followingNumber = this.following.size();
+        setFollowingNumber(followingNumber);
     }
 
     @JsonIgnore
-    public Set<User> getFollowers() {
+    public Set<Followers> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(Set<User> followers) {
+    public void setFollowers(Set<Followers> followers) {
         this.followers = followers;
-        followersNumber = this.followers.size();
+        setFollowersNumber(followersNumber);
     }
 
     @JsonIgnore
@@ -191,5 +191,17 @@ public class User {
 
     public int getArticlesNumber() {
         return articles.size();
+    }
+
+    public void setFollowingNumber(int followingNumber) {
+        this.followingNumber = followingNumber;
+    }
+
+    public void setFollowersNumber(int followersNumber) {
+        this.followersNumber = followersNumber;
+    }
+
+    public void setArticlesNumber(int articlesNumber) {
+        this.articlesNumber = articlesNumber;
     }
 }

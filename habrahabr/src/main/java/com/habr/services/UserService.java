@@ -1,32 +1,28 @@
 package com.habr.services;
 
-import com.habr.dto.UserDTO;
+import com.habr.model.Followers;
 import com.habr.model.User;
+import com.habr.repository.FollowersRepository;
 import com.habr.repository.UserRepository;
-import com.mysql.cj.xdevapi.SessionFactory;
-import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.*;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FollowersRepository followersRepository;
+
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, FollowersRepository followersRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.followersRepository = followersRepository;
     }
 
     public List<User> getAllUsers() {
@@ -34,12 +30,10 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        User user = userRepository.findDistinctById(id);
-        return user;
+        return userRepository.findDistinctById(id);
     }
 
-    @Transactional
-    public Set<User> getFollowing(Long id) {
+    public List<Followers> getFollowing(Long id) {
 //        try {
 //            UserDTO userDTO =  modelMapper.map(userRepository.getDistinctById(id), UserDTO.class);
 //        } catch (Throwable throwable) {
@@ -47,13 +41,13 @@ public class UserService {
 //        }
 //        System.out.println("=======================================================================");
 //        Set<User> users = userRepository.findDistinctById(id).getFollowing();
-        Set<User> users = userRepository.findDistinctById(id).getFollowing();
-
+        //Set<Followers> users = userRepository.findDistinctById(id).getFollowing();
+//        List<UserDTO> fol = users.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
 //        HashSet<User> following = new HashSet<>();
 //        for (User user : users) {
 //           following.add(user);
 //        }
-        return users;
+        return followersRepository.findAllByFollowingId(id);
     }
 
 }

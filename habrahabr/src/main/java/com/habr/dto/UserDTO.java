@@ -44,7 +44,6 @@ public class UserDTO implements Serializable {
     
     private Set<Article> articles;
 
-    @Transient
     private int articlesNumber;
 
     
@@ -128,7 +127,6 @@ public class UserDTO implements Serializable {
 
     public void setFollowing(Set<UserDTO> following) {
         this.following = following;
-        followingNumber = this.following.size();
     }
 
     public Set<User> getFollowers() {
@@ -137,7 +135,6 @@ public class UserDTO implements Serializable {
 
     public void setFollowers(Set<User> followers) {
         this.followers = followers;
-        followersNumber = this.followers.size();
     }
 
     public Set<ReactionCounter> getReactionCounter() {
@@ -146,7 +143,6 @@ public class UserDTO implements Serializable {
 
     public void setReactionCounter(Set<ReactionCounter> reactionCounter) {
         this.reactionCounter = reactionCounter;
-        articlesNumber = this.articles.size();
     }
 
     public int getFollowingNumber() {
@@ -160,5 +156,19 @@ public class UserDTO implements Serializable {
     public int getArticlesNumber() {
         return articles.size();
     }
+
+    public void setFollowingNumber(int followingNumber) {
+        this.followingNumber = followingNumber;
+    }
+
+    public void setFollowersNumber(int followersNumber) {
+        this.followersNumber = followersNumber;
+    }
+
+    public void setArticlesNumber(int articlesNumber) {
+        this.articlesNumber = articlesNumber;
+    }
+
+
 }
 

@@ -3,6 +3,7 @@ package com.habr.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.habr.dto.UserDTO;
+import com.habr.model.Followers;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
 import com.habr.services.UserService;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/following", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<User> getFollowing(@RequestParam("id") Long id) {
+    public List<Followers> getFollowing(@RequestParam("id") Long id) {
         return userService.getFollowing(id);
     }
 }

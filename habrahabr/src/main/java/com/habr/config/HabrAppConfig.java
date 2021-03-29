@@ -3,6 +3,8 @@ package com.habr.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
@@ -108,7 +110,7 @@ public class HabrAppConfig implements WebMvcConfigurer {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
         properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
-//        properties.put("hibernate.show_sql", env.getRequiredProperty("show_sql"));
+        properties.put("hibernate.show_sql", env.getRequiredProperty("show_sql"));
         properties.put("hibernate.show_sql", true);
         return properties;
     }
@@ -143,7 +145,12 @@ public class HabrAppConfig implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().
+                setMatchingStrategy(MatchingStrategies.STRICT).
+                setFieldMatchingEnabled(true).setSkipNullEnabled(true).
+                setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+        return modelMapper;
     }
 //    @Bean
 //    @Primary
