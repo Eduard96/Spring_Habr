@@ -6,16 +6,39 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "followers")
+//@IdClass(FollowersPK.class)
 public class Followers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
-    @ManyToOne
+    @Column(name = "followers_id", insertable = false, updatable = false)
+    private Long followersId;
+    @Column(name = "following_id", insertable = false, updatable = false)
+    private Long followingId;
+
+    public Long getFollowersId() {
+        return followersId;
+    }
+
+    public void setFollowersId(Long followersId) {
+        this.followersId = followersId;
+    }
+
+    public Long getFollowingId() {
+        return followingId;
+    }
+
+    public void setFollowingId(Long followingId) {
+        this.followingId = followingId;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private User following;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User followers;
 
     public Followers() {

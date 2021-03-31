@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/following", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Followers> getFollowing(@RequestParam("id") Long id) {
+    public List<User> getFollowing(@RequestParam("id") Long id) {
         return userService.getFollowing(id);
     }
 }

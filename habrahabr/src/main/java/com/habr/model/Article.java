@@ -22,10 +22,10 @@ public class Article {
     @Column(name = "article_content",columnDefinition = "text")
     private String articleContent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
-    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "article", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {

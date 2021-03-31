@@ -14,7 +14,7 @@ public class Reaction {
     @Column(name = "reaction_name")
     private String reactionName;
 
-    @OneToMany(mappedBy = "reaction", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "reaction", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<ReactionCounter> reactionCounter;
 
     public int getId() {

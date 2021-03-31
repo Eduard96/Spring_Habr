@@ -1,17 +1,19 @@
 package com.habr.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler",
+        "followers", "following", "articles", "reactionCounter"})
 public class User {
 
     @Id
@@ -54,15 +56,21 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToMany(mappedBy = "following", fetch = FetchType.EAGER)
-    private Set<Followers> following;
+    @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
+//    @JsonManagedReference
+//    @JsonBackReference
+    private Set<User> following;
 
     @Transient
     private int followingNumber;
 
     
-    @OneToMany(mappedBy = "followers", fetch = FetchType.EAGER)
-    private Set<Followers> followers;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(joinColumns = @JoinColumn(name = "followed_id"),
+                inverseJoinColumns = @JoinColumn(name = "follower_id"))
+//    @JsonManagedReference
+//    @JsonBackReference
+    private Set<User> followers;
 
     @Transient
     private int followersNumber;
@@ -74,7 +82,6 @@ public class User {
     @Transient
     private int articlesNumber;
 
-    
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<ReactionCounter> reactionCounter;
 
@@ -142,27 +149,27 @@ public class User {
         this.creationDate = creationDate;
     }
 
-    @JsonIgnore
-    public Set<Followers> getFollowing() {
+//    @JsonIgnore
+    public Set<User> getFollowing() {
         return following;
     }
 
-    public void setFollowing(Set<Followers> following) {
+    public void setFollowing(Set<User> following) {
         this.following = following;
         setFollowingNumber(followingNumber);
     }
 
-    @JsonIgnore
-    public Set<Followers> getFollowers() {
+//    @JsonIgnore
+    public Set<User> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(Set<Followers> followers) {
+    public void setFollowers(Set<User> followers) {
         this.followers = followers;
         setFollowersNumber(followersNumber);
     }
 
-    @JsonIgnore
+//    @JsonIgnore
     public Set<Article> getArticles() {
         return articles;
     }
@@ -171,7 +178,7 @@ public class User {
         this.articles = articles;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
     public Set<ReactionCounter> getReactionCounter() {
         return reactionCounter;
     }

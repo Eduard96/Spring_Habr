@@ -21,11 +21,11 @@ public class ReactionCounter {
     @Column(name = "reactionId", updatable = false, insertable = false)
     private Long reactionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Article article;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Reaction reaction;
 
     public Long getId() {

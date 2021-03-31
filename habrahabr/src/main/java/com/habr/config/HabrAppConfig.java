@@ -2,6 +2,7 @@ package com.habr.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MatchingStrategy;
@@ -12,12 +13,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -33,6 +37,7 @@ import java.util.Properties;
 @ComponentScan("com.habr")
 @PropertySource("classpath:hibernate.properties")
 @EnableJpaRepositories("com.habr.repository")
+@EnableTransactionManagement
 @EnableWebMvc
 public class HabrAppConfig implements WebMvcConfigurer {
 
@@ -101,6 +106,14 @@ public class HabrAppConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @Primary
+    public DataSourceTransactionManager dataSourceTransactionManager() {
+        DataSourceTransactionManager dataSourceTransaction = new DataSourceTransactionManager();
+        dataSourceTransaction.setDataSource(dataSource());
+        return dataSourceTransaction;
+    }
+
+    @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
@@ -110,14 +123,19 @@ public class HabrAppConfig implements WebMvcConfigurer {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
         properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
-        properties.put("hibernate.show_sql", env.getRequiredProperty("show_sql"));
+        //properties.put("hibernate.show_sql", env.getRequiredProperty("show_sql"));
         properties.put("hibernate.show_sql", true);
         return properties;
     }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
-        return new JpaTransactionManager(entityManagerFactory());
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory());
+        return transactionManager;
+
+
+//        return new JpaTransactionManager(entityManagerFactory());
     }
 
     @Bean
@@ -152,6 +170,7 @@ public class HabrAppConfig implements WebMvcConfigurer {
                 setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         return modelMapper;
     }
+
 //    @Bean
 //    @Primary
 //    public ObjectMapper objectMapper() {

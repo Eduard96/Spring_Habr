@@ -1,14 +1,23 @@
 package com.habr.services;
 
+import com.habr.dto.UserDTO;
 import com.habr.model.Followers;
 import com.habr.model.User;
 import com.habr.repository.FollowersRepository;
 import com.habr.repository.UserRepository;
+import com.mysql.cj.xdevapi.Collection;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -33,21 +42,13 @@ public class UserService {
         return userRepository.findDistinctById(id);
     }
 
-    public List<Followers> getFollowing(Long id) {
-//        try {
-//            UserDTO userDTO =  modelMapper.map(userRepository.getDistinctById(id), UserDTO.class);
-//        } catch (Throwable throwable) {
-//            System.out.println("something went wrong");
+    @Transactional
+    public List<User> getFollowing(Long id) {
+        Set<User> users = userRepository.getDistinctById(id).getFollowing();
+//        List<User> followers = new ArrayList<>();
+//        for(User user : users) {
+//            followers.add(userRepository.findDistinctById(user.getId()));
 //        }
-//        System.out.println("=======================================================================");
-//        Set<User> users = userRepository.findDistinctById(id).getFollowing();
-        //Set<Followers> users = userRepository.findDistinctById(id).getFollowing();
-//        List<UserDTO> fol = users.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
-//        HashSet<User> following = new HashSet<>();
-//        for (User user : users) {
-//           following.add(user);
-//        }
-        return followersRepository.findAllByFollowingId(id);
+        return new ArrayList<>(users);
     }
-
 }

@@ -11,8 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Repository
@@ -24,8 +26,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
     User findDistinctById(Long id);
 
-    List<Followers> findAllByFollowingId(Long following_id);
-
-    //User getDistinctById(Long id);
+//    @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
+//    List<User> findUsersByFollowing(List<User> following);
+    //
+    @EntityGraph( type = EntityGraph.EntityGraphType.LOAD,
+            attributePaths = {"following", "followers", "articles", "reactionCounter"})
+    User getDistinctById(Long id);
 
 }
