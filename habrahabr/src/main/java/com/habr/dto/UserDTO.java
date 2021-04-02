@@ -25,29 +25,13 @@ public class UserDTO implements Serializable {
 
     private String email;
 
-
-    private String password;
-
-    private Boolean emailVerified;
-
-    private Date creationDate;
-
-    private Set<UserDTO> following;
-
-    private int followingNumber;
-
-    
-    private Set<User> followers;
-
-    private int followersNumber;
-
-    
-    private Set<Article> articles;
-
-    private int articlesNumber;
-
-    
-    private Set<ReactionCounter> reactionCounter;
+    public UserDTO(User user) {
+        setId(user.getId());
+        setName(user.getName());
+        setSurname(user.getSurname());
+        setEmail(user.getEmail());
+        setNickname(user.getNickname());
+    }
 
     public Long getId() {
         return id;
@@ -81,22 +65,6 @@ public class UserDTO implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(Set<Article> articles) {
-        this.articles = articles;
-    }
-
     public String getSurname() {
         return surname;
     }
@@ -104,71 +72,5 @@ public class UserDTO implements Serializable {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
-    public Boolean getEmailVerified() {
-        return emailVerified;
-    }
-
-    public void setEmailVerified(Boolean emailVerified) {
-        this.emailVerified = emailVerified;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Set<UserDTO> getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(Set<UserDTO> following) {
-        this.following = following;
-    }
-
-    public Set<User> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(Set<User> followers) {
-        this.followers = followers;
-    }
-
-    public Set<ReactionCounter> getReactionCounter() {
-        return reactionCounter;
-    }
-
-    public void setReactionCounter(Set<ReactionCounter> reactionCounter) {
-        this.reactionCounter = reactionCounter;
-    }
-
-    public int getFollowingNumber() {
-        return following.size();
-    }
-
-    public int getFollowersNumber() {
-        return followers.size();
-    }
-
-    public int getArticlesNumber() {
-        return articles.size();
-    }
-
-    public void setFollowingNumber(int followingNumber) {
-        this.followingNumber = followingNumber;
-    }
-
-    public void setFollowersNumber(int followersNumber) {
-        this.followersNumber = followersNumber;
-    }
-
-    public void setArticlesNumber(int articlesNumber) {
-        this.articlesNumber = articlesNumber;
-    }
-
-
 }
 

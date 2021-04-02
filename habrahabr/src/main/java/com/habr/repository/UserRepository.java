@@ -1,19 +1,14 @@
 package com.habr.repository;
 
-import com.habr.dto.UserDTO;
-import com.habr.model.Followers;
 import com.habr.model.User;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -29,8 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
 //    List<User> findUsersByFollowing(List<User> following);
     //
-    @EntityGraph( type = EntityGraph.EntityGraphType.LOAD,
-            attributePaths = {"following", "followers", "articles", "reactionCounter"})
+    @Transactional
     User getDistinctById(Long id);
 
+//    @Query(value = "SELECT DISTINCT * from user u right outer join user_user uu ON u.id IN " +
+//            "(SELECT DISTINCT uu.followed_id from user_user uu where uu.follower_id = :id)",
+//        nativeQuery = true)
+//    Set<User> getAllFollowingById(@Param("id") Long id);
 }

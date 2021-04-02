@@ -1,24 +1,13 @@
 package com.habr.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.habr.dto.UserDTO;
-import com.habr.model.Followers;
 import com.habr.model.User;
-import com.habr.repository.UserRepository;
 import com.habr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/edobr.com/users")
@@ -42,7 +31,9 @@ public class UserController {
     }
 
     @GetMapping(value = "/following", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getFollowing(@RequestParam("id") Long id) {
-        return userService.getFollowing(id);
+    public Map<Long, List<UserDTO>> getFollowing(@RequestParam("id") Long id) {
+        HashMap<Long, List<UserDTO>> ret = new HashMap<>();
+        ret.put(id, userService.getFollowing(id));
+        return ret;
     }
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler",
-        "followers", "following", "articles", "reactionCounter"})
+                       "followers", "following", "articles", "reactionCounter"})
 public class User {
 
     @Id
@@ -66,8 +66,8 @@ public class User {
 
     
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(joinColumns = @JoinColumn(name = "followed_id"),
-                inverseJoinColumns = @JoinColumn(name = "follower_id"))
+//    @JoinTable(joinColumns = @JoinColumn(name = "followed_id"),
+//                inverseJoinColumns = @JoinColumn(name = "follower_id"))
 //    @JsonManagedReference
 //    @JsonBackReference
     private Set<User> followers;
