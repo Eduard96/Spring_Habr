@@ -1,11 +1,16 @@
 package com.habr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "article")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reactionCounter"})
+
 public class Article {
 
     @Id
@@ -22,8 +27,12 @@ public class Article {
     @Column(name = "article_content",columnDefinition = "text")
     private String articleContent;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
+
+    @Transient
+    private Long user_id;
 
     @OneToMany(mappedBy = "article", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private Set<ReactionCounter> reactionCounter;
@@ -66,6 +75,15 @@ public class Article {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Long getUser_id() {
+        setUser_id(getUser().getId());
+        return user_id;
+    }
+
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
     public Set<ReactionCounter> getReactionCounter() {

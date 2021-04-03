@@ -33,7 +33,17 @@ public class UserService {
 
     @Transactional
     public List<UserDTO> getFollowing(Long id) {
-        Set<User> users = userRepository.findDistinctById(id).getFollowing();
+        Set<User> following = userRepository.findDistinctById(id).getFollowing();
+        return userToDto(following);
+    }
+
+    @Transactional
+    public List<UserDTO> getFollowers(Long id) {
+        Set<User> followers = userRepository.findDistinctById(id).getFollowers();
+        return userToDto(followers);
+    }
+
+    private List<UserDTO> userToDto(Set<User> users) {
         List<UserDTO> followers = new ArrayList<>();
         for(User user : users) {
             UserDTO userDTO = new UserDTO(user);

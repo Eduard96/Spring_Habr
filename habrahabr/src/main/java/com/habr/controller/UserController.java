@@ -30,10 +30,17 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping(value = "/following", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<Long, List<UserDTO>> getFollowing(@RequestParam("id") Long id) {
+    @GetMapping(value = "/{id}/following", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<Long, List<UserDTO>> getFollowing(@PathVariable("id") Long id) {
         HashMap<Long, List<UserDTO>> ret = new HashMap<>();
         ret.put(id, userService.getFollowing(id));
+        return ret;
+    }
+
+    @GetMapping(value = "/{id}/followers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<Long, List<UserDTO>> getFollowers(@PathVariable("id") Long id) {
+        HashMap<Long, List<UserDTO>> ret = new HashMap<>();
+        ret.put(id, userService.getFollowers(id));
         return ret;
     }
 }

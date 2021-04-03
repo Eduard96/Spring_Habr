@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * Last step
+ */
 @Controller
 @RequestMapping("/habrahabr")
 public class RegistrationAndAuthenticationController {
