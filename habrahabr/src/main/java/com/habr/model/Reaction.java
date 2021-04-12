@@ -1,10 +1,13 @@
 package com.habr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "reaction")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reactionCounter"})
 public class Reaction {
 
     @Id
@@ -14,8 +17,12 @@ public class Reaction {
     @Column(name = "reaction_name")
     private String reactionName;
 
-    @OneToMany(mappedBy = "reaction", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "reaction_id")
     private Set<ReactionCounter> reactionCounter;
+
+    public Reaction() {
+    }
 
     public int getId() {
         return id;

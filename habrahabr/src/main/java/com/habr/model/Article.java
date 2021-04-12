@@ -1,6 +1,6 @@
 package com.habr.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -9,8 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "article")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reactionCounter"})
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reactionCounter", "user"})
 public class Article {
 
     @Id
@@ -20,6 +19,7 @@ public class Article {
     @Column
     private String title;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "publication_date",columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date publicationDate;
@@ -27,14 +27,14 @@ public class Article {
     @Column(name = "article_content",columnDefinition = "text")
     private String articleContent;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private User user;
 
     @Transient
     private Long user_id;
 
-    @OneToMany(mappedBy = "article", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "article_id")
     private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {

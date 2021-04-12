@@ -1,28 +1,15 @@
 package com.habr.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.habr.model.Article;
-import com.habr.model.ReactionCounter;
 import com.habr.model.User;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 
 public class UserDTO implements Serializable {
 
     private Long id;
-
     private String name;
-
     private String surname;
-
     private String nickname;
-
     private String email;
 
     public UserDTO(User user) {

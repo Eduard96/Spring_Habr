@@ -1,31 +1,26 @@
 package com.habr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "reaction_counter")
-@IdClass(ReactionCounterPK.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reaction", "user", "article"})
 public class ReactionCounter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Id
-    @Column(name = "article_id", updatable = false, insertable = false)
-    private Long articleId;
-    @Id
-    @Column(name = "user_id", updatable = false, insertable = false)
-    private Long userId;
-    @Id
-    @Column(name = "reactionId", updatable = false, insertable = false)
-    private Long reactionId;
+    @Transient
+    private Long user_id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private User user;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Article article;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Reaction reaction;
 
     public Long getId() {
@@ -34,30 +29,6 @@ public class ReactionCounter {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getArticleId() {
-        return articleId;
-    }
-
-    public void setArticleId(Long articleId) {
-        this.articleId = articleId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getReactionId() {
-        return reactionId;
-    }
-
-    public void setReactionId(Long reaction_id) {
-        this.reactionId = reaction_id;
     }
 
     public User getUser() {
@@ -82,5 +53,13 @@ public class ReactionCounter {
 
     public void setReaction(Reaction reaction) {
         this.reaction = reaction;
+    }
+
+    public Long getUser_id() {
+        return getUser().getId();
+    }
+
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 }

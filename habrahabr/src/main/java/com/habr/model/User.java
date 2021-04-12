@@ -1,13 +1,16 @@
 package com.habr.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -41,7 +44,7 @@ public class User {
     private String email;
 
 
-    @NotEmpty 
+    @NotEmpty
     @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column
@@ -56,33 +59,43 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @ManyToMany(mappedBy = "followers", fetch = FetchType.EAGER)
-//    @JsonManagedReference
-//    @JsonBackReference
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_user",
+            joinColumns = {@JoinColumn(referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 0)
     private Set<User> following;
 
     @Transient
     private int followingNumber;
 
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(joinColumns = @JoinColumn(name = "followed_id"),
-//                inverseJoinColumns = @JoinColumn(name = "follower_id"))
-//    @JsonManagedReference
-//    @JsonBackReference
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_user",
+            joinColumns = {@JoinColumn(referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 0)
     private Set<User> followers;
 
     @Transient
     private int followersNumber;
 
-    
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 0)
     private Set<Article> articles;
 
     @Transient
     private int articlesNumber;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
+    @Fetch(FetchMode.SELECT)
+    @BatchSize(size = 0)
     private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {
@@ -149,7 +162,6 @@ public class User {
         this.creationDate = creationDate;
     }
 
-//    @JsonIgnore
     public Set<User> getFollowing() {
         return following;
     }
@@ -159,7 +171,6 @@ public class User {
         setFollowingNumber(followingNumber);
     }
 
-//    @JsonIgnore
     public Set<User> getFollowers() {
         return followers;
     }
@@ -169,7 +180,6 @@ public class User {
         setFollowersNumber(followersNumber);
     }
 
-//    @JsonIgnore
     public Set<Article> getArticles() {
         return articles;
     }
@@ -178,7 +188,6 @@ public class User {
         this.articles = articles;
     }
 
-//    @JsonIgnore
     public Set<ReactionCounter> getReactionCounter() {
         return reactionCounter;
     }

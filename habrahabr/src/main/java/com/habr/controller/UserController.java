@@ -1,5 +1,6 @@
 package com.habr.controller;
 
+import com.habr.dto.ArticleDTO;
 import com.habr.dto.UserDTO;
 import com.habr.model.User;
 import com.habr.services.UserService;
@@ -7,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/edobr.com/users")
@@ -21,8 +24,9 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<User> getAllUsers(@RequestParam(name = "p", defaultValue = "0") int page,
+                                  @RequestParam(name = "s", defaultValue = "2") int size) {
+        return userService.getAllUsers(page, size);
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,6 +45,13 @@ public class UserController {
     public Map<Long, List<UserDTO>> getFollowers(@PathVariable("id") Long id) {
         HashMap<Long, List<UserDTO>> ret = new HashMap<>();
         ret.put(id, userService.getFollowers(id));
+        return ret;
+    }
+
+    @GetMapping ("/{id}/articles")
+    public Map<Long, List<ArticleDTO>> getUserArticles(@PathVariable("id") Long id) {
+        HashMap<Long, List<ArticleDTO>> ret = new HashMap<>();
+        ret.put(id, userService.getUserArticles(id));
         return ret;
     }
 }

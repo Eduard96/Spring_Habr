@@ -1,7 +1,6 @@
 package com.habr.repository;
 
 import com.habr.model.Article;
-import com.habr.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +12,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findAll();
 
     @EntityGraph(attributePaths = {"user", "reactionCounter"})
-    List<Article> findAllByUserId(Long user_id);
+    Article findDistinctById(Long user_id);
+
 }

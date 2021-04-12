@@ -1,14 +1,18 @@
 package com.habr.services;
 
+import com.habr.dto.ArticleDTO;
 import com.habr.dto.UserDTO;
+import com.habr.model.Article;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -16,15 +20,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getAllUsers(int page, int size) {
+        return userRepository.findAllBy(PageRequest.of(page, size)).toList();
     }
 
     public User getUserById(Long id) {
@@ -46,9 +47,18 @@ public class UserService {
     private List<UserDTO> userToDto(Set<User> users) {
         List<UserDTO> followers = new ArrayList<>();
         for(User user : users) {
-            UserDTO userDTO = new UserDTO(user);
-            followers.add(userDTO);
+            followers.add(new UserDTO(user));
         }
         return followers;
+    }
+
+    @Transactional
+    public List<ArticleDTO> getUserArticles(Long id) {
+        User user = userRepository.findDistinctById(id);
+        List<ArticleDTO> userArticles = new ArrayList<>();
+        for (Article article : user.getArticles()) {
+            userArticles.add(new ArticleDTO(article));
+        }
+        return userArticles;
     }
 }
