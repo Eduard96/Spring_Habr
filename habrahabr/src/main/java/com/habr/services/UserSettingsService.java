@@ -3,6 +3,7 @@ package com.habr.services;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class UserSettingsService {
         this.userRepository = userRepository;
     }
 
+    @CacheEvict(value = "addresses", allEntries = true)
     @Transactional
     public User updateNameSurname(User user) {
         User persistentUser = userRepository.findDistinctById(user.getId());

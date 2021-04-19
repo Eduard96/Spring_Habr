@@ -1,28 +1,26 @@
 package com.habr.config;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -30,21 +28,28 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan("com.habr")
-@PropertySource("classpath:hibernate.properties")
+@EnableWebMvc
+@EnableCaching
+@PropertySource("classpath:persistence.properties")
 @EnableJpaRepositories("com.habr.repository")
 @EnableTransactionManagement
-@EnableWebMvc
-public class HabrAppConfig implements WebMvcConfigurer {
+//@EnableWebSecurity extends WebSecurityConfigurerAdapter
+public class HabrAppConfig  implements WebMvcConfigurer {
 
     @Autowired
     private Environment env;
 
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public HabrAppConfig(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("addresses");
     }
+
+//    private final ApplicationContext applicationContext;
+//
+//    @Autowired
+//    public HabrAppConfig(ApplicationContext applicationContext) {
+//        this.applicationContext = applicationContext;
+//    }
 
     /**
      * applicationContext используем для конфигурации
@@ -53,59 +58,67 @@ public class HabrAppConfig implements WebMvcConfigurer {
      * Так же указываем рассширение данных представлений
      * @return
      */
-    @Bean
-    public SpringResourceTemplateResolver templateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("WEB-INF/view/");
-        resolver.setSuffix(".html");
-        return resolver;
-    }
+//    @Bean
+//    public SpringResourceTemplateResolver templateResolver() {
+//        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+//        resolver.setApplicationContext(applicationContext);
+//        resolver.setPrefix("WEB-INF/view/");
+//        resolver.setSuffix(".html");
+//        return resolver;
+//    }
 
     /**
      * Опять какая-то конфигурация для представлений,
      * но не углубился
      * @return
      */
-    @Bean
-    public SpringTemplateEngine templateEngine() {
-        SpringTemplateEngine engine = new SpringTemplateEngine();
-        engine.setTemplateResolver(templateResolver());
-        engine.setEnableSpringELCompiler(true);
-        return engine;
-    }
+//    @Bean
+//    public SpringTemplateEngine templateEngine() {
+//        SpringTemplateEngine engine = new SpringTemplateEngine();
+//        engine.setTemplateResolver(templateResolver());
+//        engine.setEnableSpringELCompiler(true);
+//        return engine;
+//    }
 
     /**
      * Здесь мы указываем что будем использовать Thymeleaf
      * Данный метод переопределяем из интерфейса WebMvcConfigurer
-     * @param viewResolverRegistry
+     * @param //viewResolverRegistry
      */
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry viewResolverRegistry) {
-        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine());
-        viewResolverRegistry.viewResolver(resolver);
-    }
+//    @Override
+//    public void configureViewResolvers(ViewResolverRegistry viewResolverRegistry) {
+//        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+//        resolver.setTemplateEngine(templateEngine());
+//        viewResolverRegistry.viewResolver(resolver);
+//    }
+
+//    @Bean
+//    public ModelMapper modelMapper() {
+//        ModelMapper modelMapper = new ModelMapper();
+//        modelMapper.getConfiguration().
+//                setMatchingStrategy(MatchingStrategies.STRICT).
+//                setFieldMatchingEnabled(true).setSkipNullEnabled(true).
+//                setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+//        return modelMapper;
+//    }
+
+
+
+
+
+
+
+
 
     @Bean
     public DataSource dataSource() {
 
         DriverManagerDataSource driverManager = new DriverManagerDataSource();
-
-        driverManager.setDriverClassName(env.getRequiredProperty("driver"));
         driverManager.setUrl(env.getRequiredProperty("url"));
+        driverManager.setDriverClassName(env.getRequiredProperty("driver"));
         driverManager.setUsername(env.getRequiredProperty("username"));
         driverManager.setPassword(env.getRequiredProperty("password"));
-
         return driverManager;
-    }
-
-    @Bean
-    @Primary
-    public DataSourceTransactionManager dataSourceTransactionManager() {
-        DataSourceTransactionManager dataSourceTransaction = new DataSourceTransactionManager();
-        dataSourceTransaction.setDataSource(dataSource());
-        return dataSourceTransaction;
     }
 
     @Bean
@@ -113,26 +126,43 @@ public class HabrAppConfig implements WebMvcConfigurer {
         return new JdbcTemplate(dataSource());
     }
 
+//    @Bean
+//    @Primary
+//    public DataSourceTransactionManager dataSourceTransactionManager() {
+//        DataSourceTransactionManager dataSourceTransaction = new DataSourceTransactionManager();
+//        dataSourceTransaction.setDataSource(dataSource());
+//        dataSourceTransaction.setTransactionSynchronization();
+//        return dataSourceTransaction;
+//    }
+
+    //    @Bean
+//    public PlatformTransactionManager transactionManager() {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(entityManagerFactory());
+//        return transactionManager;
+//    }
+
+   @Bean
+   public LocalSessionFactoryBean sessionFactoryBean() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan("com.habr.model");
+        sessionFactory.setHibernateProperties(additionalProperties());
+        return sessionFactory;
+   }
+
     @Bean
     public Properties additionalProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
         properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
-        //properties.put("hibernate.show_sql", env.getRequiredProperty("show_sql"));
-        properties.put("hibernate.show_sql", true);
         return properties;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory());
-        return transactionManager;
     }
 
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+        hibernateJpaVendorAdapter.setShowSql(true);
         hibernateJpaVendorAdapter.setGenerateDdl(true);
         return hibernateJpaVendorAdapter;
     }
@@ -140,26 +170,22 @@ public class HabrAppConfig implements WebMvcConfigurer {
     @Bean
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPackagesToScan("com.habr.model");
         factoryBean.setDataSource(dataSource());
-        factoryBean.setJpaProperties(additionalProperties());
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+        factoryBean.setPackagesToScan("com.habr.model");
         factoryBean.afterPropertiesSet();
-        return factoryBean.getNativeEntityManagerFactory();
+        return factoryBean.getObject();
+    }
+
+    @Bean
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
+        return jpaTransactionManager;
     }
 
     @Bean
     public PersistenceExceptionTranslationPostProcessor postProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
-    }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().
-                setMatchingStrategy(MatchingStrategies.STRICT).
-                setFieldMatchingEnabled(true).setSkipNullEnabled(true).
-                setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
-        return modelMapper;
     }
 }

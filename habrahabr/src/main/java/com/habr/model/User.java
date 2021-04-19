@@ -60,11 +60,10 @@ public class User {
     private Date creationDate;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_user",
+    @JoinTable(name = "user_following",
             joinColumns = {@JoinColumn(referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
     @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 0)
     private Set<User> following;
 
     @Transient
@@ -72,11 +71,9 @@ public class User {
 
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_user",
-            joinColumns = {@JoinColumn(referencedColumnName = "id")},
+    @JoinTable(name = "user_followers",
             inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
     @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 0)
     private Set<User> followers;
 
     @Transient

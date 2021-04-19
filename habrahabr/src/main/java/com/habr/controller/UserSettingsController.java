@@ -20,7 +20,7 @@ public class UserSettingsController {
         this.userSettingsService = userSettingsService;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/changeInfo",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public User updateNameSurname(@RequestBody User user) {
         return userSettingsService.updateNameSurname(user);

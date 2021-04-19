@@ -11,9 +11,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
-    Page<User> findAllBy(Pageable pageable);
+    //@EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
+    Page<User> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
     User findDistinctById(Long id);
+
+    @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
+    User findDistinctByFollowersId(Long followers_id);
+
+    @EntityGraph(attributePaths = {"following", "followers", "articles", "reactionCounter"})
+    Page<User> findDistinctById(User user, Pageable pageable);
+
 }

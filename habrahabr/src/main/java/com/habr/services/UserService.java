@@ -6,6 +6,7 @@ import com.habr.model.Article;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers(int page, int size) {
-        return userRepository.findAllBy(PageRequest.of(page, size)).toList();
+    @Cacheable("addresses")
+    public List<UserDTO> getAllUsers(int page, int size) {
+        Set<User> user = userRepository.findAll(PageRequest.of(page, size)).toSet();
+        return userToDto(user);
     }
 
     public User getUserById(Long id) {
@@ -34,7 +37,7 @@ public class UserService {
 
     @Transactional
     public List<UserDTO> getFollowing(Long id) {
-        Set<User> following = userRepository.findDistinctById(id).getFollowing();
+        Set<User> following = userRepository.findDistinctByFollowersId(id).getFollowing();
         return userToDto(following);
     }
 

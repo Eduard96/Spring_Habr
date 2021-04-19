@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getAllUsers(@RequestParam(name = "p", defaultValue = "0") int page,
+    public List<UserDTO> getAllUsers(@RequestParam(name = "p", defaultValue = "0") int page,
                                   @RequestParam(name = "s", defaultValue = "2") int size) {
         return userService.getAllUsers(page, size);
     }
