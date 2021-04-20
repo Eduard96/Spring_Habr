@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler",
-                       "followers", "following", "articles", "reactionCounter"})
+                       "followers", "articles", "reactionCounter"})
 public class User {
 
     @Id
@@ -59,12 +59,12 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_following",
-            joinColumns = {@JoinColumn(referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
-    @Fetch(FetchMode.SELECT)
-    private Set<User> following;
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "user_following",
+//            joinColumns = {@JoinColumn(referencedColumnName = "id")},
+//            inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
+//    @Fetch(FetchMode.SELECT)
+//    private Set<User> following;
 
     @Transient
     private int followingNumber;
@@ -72,6 +72,7 @@ public class User {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_followers",
+            joinColumns = {@JoinColumn(referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
     @Fetch(FetchMode.SELECT)
     private Set<User> followers;
@@ -159,14 +160,14 @@ public class User {
         this.creationDate = creationDate;
     }
 
-    public Set<User> getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(Set<User> following) {
-        this.following = following;
-        setFollowingNumber(followingNumber);
-    }
+//    public Set<User> getFollowing() {
+//        return following;
+//    }
+//
+//    public void setFollowing(Set<User> following) {
+//        this.following = following;
+//        setFollowingNumber(followingNumber);
+//    }
 
     public Set<User> getFollowers() {
         return followers;
@@ -195,7 +196,7 @@ public class User {
     }
 
     public int getFollowingNumber() {
-        return following.size();
+        return followingNumber;
     }
 
     public int getFollowersNumber() {

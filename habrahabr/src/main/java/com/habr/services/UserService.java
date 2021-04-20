@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,19 +33,21 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findDistinctById(id);
+        User user = userRepository.findDistinctById(id);
+        user.setFollowingNumber(userRepository.getFollowingNumber(id));
+        return user;
     }
 
     @Transactional
     public List<UserDTO> getFollowing(Long id) {
-        Set<User> following = userRepository.findDistinctByFollowersId(id).getFollowing();
-        return userToDto(following);
+        Set<User> following = userRepository.findByFollowersId(id);
+        return userToDto(new HashSet<>(following));
     }
 
     @Transactional
     public List<UserDTO> getFollowers(Long id) {
-        Set<User> followers = userRepository.findDistinctById(id).getFollowers();
-        return userToDto(followers);
+        Set<User> followers = userRepository.findByUserId(id, 0, 10);
+        return userToDto(new HashSet<>(followers));
     }
 
     private List<UserDTO> userToDto(Set<User> users) {

@@ -156,6 +156,7 @@ public class HabrAppConfig  implements WebMvcConfigurer {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
         properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
+        properties.put("hibernate.format_sql", true);
         return properties;
     }
 
