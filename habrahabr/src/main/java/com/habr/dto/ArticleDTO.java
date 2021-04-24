@@ -13,6 +13,9 @@ public class ArticleDTO {
     private String title;
     private String articleContent;
 
+    public ArticleDTO() {
+    }
+
     public ArticleDTO(Article article) {
         this.id = article.getId();
         this.title = article.getTitle();

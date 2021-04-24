@@ -1,11 +1,13 @@
 package com.habr.services;
 
+import com.habr.dto.ArticleDTO;
 import com.habr.dto.ReactionDTO;
 import com.habr.model.Article;
 import com.habr.model.ReactionCounter;
 import com.habr.repository.ArticleRepository;
 import com.habr.repository.ReactionCounterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +26,13 @@ public class ArticleService {
         this.counterRepository = counterRepository;
     }
 
-    public List<Article> getArticles() {
-        return articleRepository.findAll();
+    public List<ArticleDTO> getArticles(int page, int size) {
+        List<Article> articles = articleRepository.findAllBy(PageRequest.of(page, size));
+        List<ArticleDTO> articleDTOS = new ArrayList<>();
+        for (Article article : articles) {
+            articleDTOS.add(new ArticleDTO(article));
+        }
+        return articleDTOS;
     }
 
     public Article getArticleById(Long id) {

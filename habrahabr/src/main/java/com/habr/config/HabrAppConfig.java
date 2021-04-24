@@ -1,5 +1,6 @@
 package com.habr.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -33,18 +34,87 @@ import java.util.Properties;
 @PropertySource("classpath:persistence.properties")
 @EnableJpaRepositories("com.habr.repository")
 @EnableTransactionManagement
-//@EnableWebSecurity extends WebSecurityConfigurerAdapter
-public class HabrAppConfig  implements WebMvcConfigurer {
+public class HabrAppConfig implements WebMvcConfigurer  {
 
     @Autowired
     private Environment env;
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("addresses");
+        return new ConcurrentMapCacheManager("users");
     }
 
-//    private final ApplicationContext applicationContext;
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
+    @Bean
+    public DataSource dataSource() {
+
+        DriverManagerDataSource driverManager = new DriverManagerDataSource();
+        driverManager.setUrl(env.getRequiredProperty("url"));
+        driverManager.setDriverClassName(env.getRequiredProperty("driver"));
+        driverManager.setUsername(env.getRequiredProperty("username"));
+        driverManager.setPassword(env.getRequiredProperty("password"));
+        return driverManager;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactoryBean() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan("com.habr.model");
+        sessionFactory.setHibernateProperties(additionalProperties());
+        return sessionFactory;
+    }
+
+    @Bean
+    public Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
+        properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
+        properties.put("hibernate.format_sql", true);
+        return properties;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+        hibernateJpaVendorAdapter.setShowSql(true);
+        hibernateJpaVendorAdapter.setGenerateDdl(true);
+        return hibernateJpaVendorAdapter;
+    }
+
+    @Bean
+    public EntityManagerFactory entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setDataSource(dataSource());
+        factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+        factoryBean.setPackagesToScan("com.habr.model");
+        factoryBean.afterPropertiesSet();
+        return factoryBean.getObject();
+    }
+
+    @Bean
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
+        return jpaTransactionManager;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor postProcessor() {
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+
+    //    private final ApplicationContext applicationContext;
 //
 //    @Autowired
 //    public HabrAppConfig(ApplicationContext applicationContext) {
@@ -91,102 +161,4 @@ public class HabrAppConfig  implements WebMvcConfigurer {
 //        resolver.setTemplateEngine(templateEngine());
 //        viewResolverRegistry.viewResolver(resolver);
 //    }
-
-//    @Bean
-//    public ModelMapper modelMapper() {
-//        ModelMapper modelMapper = new ModelMapper();
-//        modelMapper.getConfiguration().
-//                setMatchingStrategy(MatchingStrategies.STRICT).
-//                setFieldMatchingEnabled(true).setSkipNullEnabled(true).
-//                setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
-//        return modelMapper;
-//    }
-
-
-
-
-
-
-
-
-
-    @Bean
-    public DataSource dataSource() {
-
-        DriverManagerDataSource driverManager = new DriverManagerDataSource();
-        driverManager.setUrl(env.getRequiredProperty("url"));
-        driverManager.setDriverClassName(env.getRequiredProperty("driver"));
-        driverManager.setUsername(env.getRequiredProperty("username"));
-        driverManager.setPassword(env.getRequiredProperty("password"));
-        return driverManager;
-    }
-
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
-    }
-
-//    @Bean
-//    @Primary
-//    public DataSourceTransactionManager dataSourceTransactionManager() {
-//        DataSourceTransactionManager dataSourceTransaction = new DataSourceTransactionManager();
-//        dataSourceTransaction.setDataSource(dataSource());
-//        dataSourceTransaction.setTransactionSynchronization();
-//        return dataSourceTransaction;
-//    }
-
-    //    @Bean
-//    public PlatformTransactionManager transactionManager() {
-//        JpaTransactionManager transactionManager = new JpaTransactionManager();
-//        transactionManager.setEntityManagerFactory(entityManagerFactory());
-//        return transactionManager;
-//    }
-
-   @Bean
-   public LocalSessionFactoryBean sessionFactoryBean() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.habr.model");
-        sessionFactory.setHibernateProperties(additionalProperties());
-        return sessionFactory;
-   }
-
-    @Bean
-    public Properties additionalProperties() {
-        Properties properties = new Properties();
-        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hbm2ddl"));
-        properties.put("hibernate.dialect", env.getRequiredProperty("dialect"));
-        properties.put("hibernate.format_sql", true);
-        return properties;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-        hibernateJpaVendorAdapter.setShowSql(true);
-        hibernateJpaVendorAdapter.setGenerateDdl(true);
-        return hibernateJpaVendorAdapter;
-    }
-
-    @Bean
-    public EntityManagerFactory entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
-        factoryBean.setPackagesToScan("com.habr.model");
-        factoryBean.afterPropertiesSet();
-        return factoryBean.getObject();
-    }
-
-    @Bean
-    public JpaTransactionManager transactionManager() {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
-        return jpaTransactionManager;
-    }
-
-    @Bean
-    public PersistenceExceptionTranslationPostProcessor postProcessor() {
-        return new PersistenceExceptionTranslationPostProcessor();
-    }
 }

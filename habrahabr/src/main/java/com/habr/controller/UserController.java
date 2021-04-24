@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UserDTO> getAllUsers(@RequestParam(name = "p", defaultValue = "0") int page,
-                                  @RequestParam(name = "s", defaultValue = "2") int size) {
+                                  @RequestParam(name = "s", defaultValue = "5") int size) {
         return userService.getAllUsers(page, size);
     }
 
@@ -35,16 +35,20 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}/following", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<Long, List<UserDTO>> getFollowing(@PathVariable("id") Long id) {
+    public Map<Long, List<UserDTO>> getFollowing(@PathVariable("id") Long id,
+                                                 @RequestParam(name = "p", defaultValue = "0") int page,
+                                                 @RequestParam(name = "s", defaultValue = "5") int size) {
         HashMap<Long, List<UserDTO>> ret = new HashMap<>();
-        ret.put(id, userService.getFollowing(id));
+        ret.put(id, userService.getFollowing(id, page, size));
         return ret;
     }
 
     @GetMapping(value = "/{id}/followers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<Long, List<UserDTO>> getFollowers(@PathVariable("id") Long id) {
+    public Map<Long, List<UserDTO>> getFollowers(@PathVariable("id") Long id,
+                                                 @RequestParam(name = "p", defaultValue = "0") int page,
+                                                 @RequestParam(name = "s", defaultValue = "5") int size) {
         HashMap<Long, List<UserDTO>> ret = new HashMap<>();
-        ret.put(id, userService.getFollowers(id));
+        ret.put(id, userService.getFollowers(id, page, size));
         return ret;
     }
 

@@ -2,9 +2,6 @@ package com.habr.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -74,7 +71,6 @@ public class User {
     @JoinTable(name = "user_followers",
             joinColumns = {@JoinColumn(referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
-    @Fetch(FetchMode.SELECT)
     private Set<User> followers;
 
     @Transient
@@ -83,8 +79,6 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 0)
     private Set<Article> articles;
 
     @Transient
@@ -92,8 +86,6 @@ public class User {
 
     @OneToMany( fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
-    @Fetch(FetchMode.SELECT)
-    @BatchSize(size = 0)
     private Set<ReactionCounter> reactionCounter;
 
     public Long getId() {
@@ -159,15 +151,6 @@ public class User {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-
-//    public Set<User> getFollowing() {
-//        return following;
-//    }
-//
-//    public void setFollowing(Set<User> following) {
-//        this.following = following;
-//        setFollowingNumber(followingNumber);
-//    }
 
     public Set<User> getFollowers() {
         return followers;

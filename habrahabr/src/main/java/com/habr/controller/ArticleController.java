@@ -1,13 +1,11 @@
 package com.habr.controller;
 
+import com.habr.dto.ArticleDTO;
 import com.habr.dto.ReactionDTO;
 import com.habr.model.Article;
 import com.habr.services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,8 +21,9 @@ public class ArticleController {
     }
 
     @GetMapping
-    public List<Article> getArticles() {
-        return articleService.getArticles();
+    public List<ArticleDTO> getArticles(@RequestParam(value = "p", defaultValue = "0") int page,
+                                        @RequestParam(value = "s", defaultValue = "2") int size) {
+        return articleService.getArticles(page, size);
     }
 
     @GetMapping("/{id}")

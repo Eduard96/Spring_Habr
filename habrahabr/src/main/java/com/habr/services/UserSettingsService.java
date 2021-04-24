@@ -20,7 +20,7 @@ public class UserSettingsService {
         this.userRepository = userRepository;
     }
 
-    @CacheEvict(value = "addresses", allEntries = true)
+    @CacheEvict(value = "users", condition = "#result != null")
     @Transactional
     public User updateNameSurname(User user) {
         User persistentUser = userRepository.findDistinctById(user.getId());

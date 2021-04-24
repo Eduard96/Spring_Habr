@@ -2,9 +2,9 @@ package com.habr.services;
 
 import com.habr.dto.ArticleDTO;
 import com.habr.dto.UserDTO;
-import com.habr.model.Article;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
+import com.habr.util.ModelToDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -26,45 +24,31 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    @Cacheable("addresses")
+    @Cacheable("users")
     public List<UserDTO> getAllUsers(int page, int size) {
-        Set<User> user = userRepository.findAll(PageRequest.of(page, size)).toSet();
-        return userToDto(user);
+        List<User> users = userRepository.findAllBy(PageRequest.of(page, size));
+        return ModelToDTO.mapList(users, UserDTO.class);
     }
 
     public User getUserById(Long id) {
         User user = userRepository.findDistinctById(id);
-        user.setFollowingNumber(userRepository.getFollowingNumber(id));
+        user.setFollowingNumber(userRepository.countAllByFollowersId(id));
         return user;
     }
 
-    @Transactional
-    public List<UserDTO> getFollowing(Long id) {
-        Set<User> following = userRepository.findByFollowersId(id);
-        return userToDto(new HashSet<>(following));
+    public List<UserDTO> getFollowing(Long id, int page, int size) {
+        List<User> following = userRepository.findByFollowersId(id, PageRequest.of(page, size));
+        return ModelToDTO.mapList(following, UserDTO.class);
     }
 
-    @Transactional
-    public List<UserDTO> getFollowers(Long id) {
-        Set<User> followers = userRepository.findByUserId(id, 0, 10);
-        return userToDto(new HashSet<>(followers));
-    }
-
-    private List<UserDTO> userToDto(Set<User> users) {
-        List<UserDTO> followers = new ArrayList<>();
-        for(User user : users) {
-            followers.add(new UserDTO(user));
-        }
-        return followers;
+    public List<UserDTO> getFollowers(Long id, int page, int size) {
+        List<User> followers = userRepository.findByUserId(id, page, size);
+        return ModelToDTO.mapList(followers, UserDTO.class);
     }
 
     @Transactional
     public List<ArticleDTO> getUserArticles(Long id) {
         User user = userRepository.findDistinctById(id);
-        List<ArticleDTO> userArticles = new ArrayList<>();
-        for (Article article : user.getArticles()) {
-            userArticles.add(new ArticleDTO(article));
-        }
-        return userArticles;
+        return ModelToDTO.mapList(new ArrayList<>(user.getArticles()), ArticleDTO.class);
     }
 }

@@ -1,7 +1,5 @@
 package com.habr.dto;
 
-import com.habr.model.User;
-
 import java.io.Serializable;
 
 public class UserDTO implements Serializable {
@@ -12,13 +10,16 @@ public class UserDTO implements Serializable {
     private String nickname;
     private String email;
 
-    public UserDTO(User user) {
-        setId(user.getId());
-        setName(user.getName());
-        setSurname(user.getSurname());
-        setEmail(user.getEmail());
-        setNickname(user.getNickname());
+    public UserDTO() {
     }
+
+//    public UserDTO(User user) {
+//        setId(user.getId());
+//        setName(user.getName());
+//        setSurname(user.getSurname());
+//        setEmail(user.getEmail());
+//        setNickname(user.getNickname());
+//    }
 
     public Long getId() {
         return id;
