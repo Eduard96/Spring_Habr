@@ -6,14 +6,17 @@ import com.habr.model.User;
 import com.habr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/edobr.com/users")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public User getUserById(@PathVariable Long id) {
+    public User getUserById(@PathVariable @Min(value = 2, message = "/{id} must be greater than or equal to 2 ") Long id) {
         return userService.getUserById(id);
     }
 

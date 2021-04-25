@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Set;
@@ -20,31 +19,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
-    @Column
+    @Size(min = 2, max = 25, message = "Name Should be more than 2 and less than 25")
+    @Column(nullable = false)
     private String name;
 
-    @NotEmpty
-    @Size(min = 2, max = 25, message = "Should be more than 2 and less than 25")
-    @Column
+    @Size(min = 2, max = 25, message = "Surname Should be more than 2 and less than 25")
+    @Column(nullable = false)
     private String surname;
 
-    @NotEmpty
-    @Size(min = 5, max = 30, message = "Should be more than 5 and less than 30")
-    @Column(unique = true)
+    @Size(min = 5, max = 30, message = "Nickname should be more than 5 and less than 30")
+    @Column(nullable = false, unique = true)
     private String nickname;
 
-    @NotEmpty
     @Email
-    @Column (unique = true)
+    @Column (nullable = false, unique = true)
     private String email;
 
-
-    @NotEmpty
     @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column
+    @Column(nullable = false)
     private String password;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -52,7 +45,7 @@ public class User {
     private Boolean emailVerified;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "creation_date",columnDefinition="DATETIME")
+    @Column(nullable = false, name = "creation_date",columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 

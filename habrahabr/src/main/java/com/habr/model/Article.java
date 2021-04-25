@@ -16,11 +16,11 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    @Column(name = "publication_date",columnDefinition="DATETIME")
+    @Column(nullable = false, name = "publication_date",columnDefinition="DATETIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date publicationDate;
 

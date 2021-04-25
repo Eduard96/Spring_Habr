@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/edobr.com/settings")
 public class UserSettingsController {
@@ -22,7 +24,7 @@ public class UserSettingsController {
 
     @PostMapping(value = "/changeInfo",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public User updateNameSurname(@RequestBody User user) {
+    public User updateNameSurname(@Valid @RequestBody User user) {
         return userSettingsService.updateNameSurname(user);
     }
 

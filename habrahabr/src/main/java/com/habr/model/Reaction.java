@@ -14,7 +14,7 @@ public class Reaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "reaction_name")
+    @Column(nullable = false, name = "reaction_name")
     private String reactionName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
