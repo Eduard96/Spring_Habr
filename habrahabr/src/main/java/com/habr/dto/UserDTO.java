@@ -10,17 +10,6 @@ public class UserDTO implements Serializable {
     private String nickname;
     private String email;
 
-    public UserDTO() {
-    }
-
-//    public UserDTO(User user) {
-//        setId(user.getId());
-//        setName(user.getName());
-//        setSurname(user.getSurname());
-//        setEmail(user.getEmail());
-//        setNickname(user.getNickname());
-//    }
-
     public Long getId() {
         return id;
     }

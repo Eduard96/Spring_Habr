@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "reaction_counter")
+@Table(name = "reaction_counter",
+        uniqueConstraints = @UniqueConstraint(columnNames={"user_id", "article_id", "reaction_id"}))
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reaction", "user", "article"})
 public class ReactionCounter {
 
@@ -13,8 +14,14 @@ public class ReactionCounter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Transient
+    @Column(name = "user_id", insertable = false, updatable = false)
     private Long user_id;
+    @Column(name = "article_id", insertable = false, updatable = false)
+    private Long article_id;
+    @Column(name = "reaction_id", insertable = false, updatable = false)
+    private int reaction_id;
+//    @Column(name = "reaction_id", insertable = false, updatable = false)
+//    private String reaction_name;
 
     @ManyToOne
     private User user;
@@ -56,10 +63,34 @@ public class ReactionCounter {
     }
 
     public Long getUser_id() {
-        return getUser().getId();
+        return user_id;
     }
 
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
+
+    public Long getArticle_id() {
+        return article_id;
+    }
+
+    public void setArticle_id(Long article_id) {
+        this.article_id = article_id;
+    }
+
+    public int getReaction_id() {
+        return reaction_id;
+    }
+
+    public void setReaction_id(int reaction_id) {
+        this.reaction_id = reaction_id;
+    }
+
+//    public String getReaction_name() {
+//        return getReaction().getReactionName();
+//    }
+//
+//    public void setReaction_name(String reaction_name) {
+//        this.reaction_name = reaction_name;
+//    }
 }

@@ -1,7 +1,7 @@
 package com.habr.controller;
 
 import com.habr.dto.ArticleDTO;
-import com.habr.dto.ReactionDTO;
+import com.habr.dto.ReactionCounterDTO;
 import com.habr.model.Article;
 import com.habr.services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}/reactions")
-    public List<ReactionDTO> getArticleReactions(@PathVariable("id") Long id) {
+    public List<ReactionCounterDTO> getArticleReactions(@PathVariable("id") Long id) {
         return articleService.getArticleReactions(id);
     }
 }

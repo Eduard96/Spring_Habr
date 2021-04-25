@@ -1,7 +1,6 @@
 package com.habr.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.habr.model.Article;
 
 import java.util.Date;
 
@@ -12,16 +11,6 @@ public class ArticleDTO {
     private Date publicationDate;
     private String title;
     private String articleContent;
-
-    public ArticleDTO() {
-    }
-
-    public ArticleDTO(Article article) {
-        this.id = article.getId();
-        this.title = article.getTitle();
-        this.articleContent = article.getArticleContent();
-        this.publicationDate = article.getPublicationDate();
-    }
 
     public Long getId() {
         return id;

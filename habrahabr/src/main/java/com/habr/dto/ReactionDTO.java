@@ -1,7 +1,5 @@
 package com.habr.dto;
 
-import com.habr.model.Reaction;
-
 import java.io.Serializable;
 
 public class ReactionDTO implements Serializable {
@@ -9,12 +7,6 @@ public class ReactionDTO implements Serializable {
     private int id;
     private String reactionName;
     private Long user_id;
-
-    public ReactionDTO(Reaction reaction, Long user_id) {
-        this.id = reaction.getId();
-        this.reactionName = reaction.getReactionName();
-        this.user_id = user_id;
-    }
 
     public int getId() {
         return id;

@@ -12,6 +12,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findAllBy(Pageable pageable);
 
     @EntityGraph(attributePaths = {"user", "reactionCounter"})
-    Article findDistinctById(Long user_id);
+    Article findDistinctById(Long id);
 
 }
