@@ -24,8 +24,8 @@ public class UserSettingsService {
     @Transactional
     public User updateNameSurname(User user) {
         User persistentUser = userRepository.findDistinctById(user.getId());
-        persistentUser.setName(user.getName());
-        persistentUser.setSurname(user.getSurname());
+        persistentUser.setFirstName(user.getFirstName());
+        persistentUser.setLastName(user.getLastName());
         user = userRepository.save(persistentUser);
         return user;
     }

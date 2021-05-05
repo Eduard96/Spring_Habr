@@ -2,12 +2,14 @@ package com.habr.controller;
 
 import com.habr.dto.ArticleDTO;
 import com.habr.dto.UserDTO;
-import com.habr.model.User;
 import com.habr.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.validation.constraints.Min;
 import java.util.HashMap;
@@ -20,10 +22,12 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RestTemplate restTemplate) {
         this.userService = userService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,9 +36,19 @@ public class UserController {
         return userService.getAllUsers(page, size);
     }
 
+    @Autowired
+    private WebClient webClient;
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public User getUserById(@PathVariable @Min(value = 2, message = "/{id} must be greater than or equal to 2 ") Long id) {
-        return userService.getUserById(id);
+    public Mono<?> getUserById(@PathVariable @Min(value = 2, message = "/{id} must be greater than or equal to 2 ") Long id,
+                            @RequestHeader HttpHeaders httpHeaders) {
+        System.out.println(httpHeaders.toString());
+        HttpEntity<String> httpEntity =  new HttpEntity<>("headers", httpHeaders);
+        ResponseEntity<String> str = restTemplate.exchange("http://localhost:8082/api/test/all/",
+                                                                    HttpMethod.GET, httpEntity, String.class);
+        Mono<String> mono = webClient.get().uri("/api/test/all").
+                retrieve().bodyToMono(String.class);
+        return mono;
+        //return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping(value = "/{id}/following", produces = MediaType.APPLICATION_JSON_VALUE)

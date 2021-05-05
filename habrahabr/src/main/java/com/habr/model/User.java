@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -19,35 +18,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 2, max = 25, message = "Name Should be more than 2 and less than 25")
-    @Column(nullable = false)
-    private String name;
+    @Size(min = 2, max = 25, message = "firstName Should be more than 2 and less than 25")
+    @Column(name = "first_name")
+    private String firstName;
 
-    @Size(min = 2, max = 25, message = "Surname Should be more than 2 and less than 25")
-    @Column(nullable = false)
-    private String surname;
+    @Size(min = 2, max = 25, message = "lastName Should be more than 2 and less than 25")
+    @Column(name = "last_name")
+    private String lastName;
 
-    @Size(min = 5, max = 30, message = "Nickname should be more than 5 and less than 30")
-    @Column(nullable = false, unique = true)
-    private String nickname;
+    @Size(min = 5, max = 30, message = "userName should be more than 5 and less than 30")
+    @Column(unique = true, name = "user_name")
+    private String userName;
 
     @Email
-    @Column (nullable = false, unique = true)
+    @Column (unique = true)
     private String email;
 
-    @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Size(min = 8, max = 120, message = "Should be more than 8 and less than 20")
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "email_verified")
     private Boolean emailVerified;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(nullable = false, name = "creation_date",columnDefinition="DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @Column(nullable = false, name = "creation_date",columnDefinition="DATETIME")
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date creationDate;
 
 //    @ManyToMany(fetch = FetchType.LAZY)
 //    @JoinTable(name = "user_following",
@@ -89,20 +88,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String name) {
+        this.firstName = name;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setUserName(String nickname) {
+        this.userName = nickname;
     }
 
     public String getEmail() {
@@ -121,12 +120,12 @@ public class User {
         this.password = password;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setLastName(String surname) {
+        this.lastName = surname;
     }
 
     public Boolean getEmailVerified() {
@@ -137,13 +136,13 @@ public class User {
         this.emailVerified = emailVerified;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
+//    public Date getCreationDate() {
+//        return creationDate;
+//    }
+//
+//    public void setCreationDate(Date creationDate) {
+//        this.creationDate = creationDate;
+//    }
 
     public Set<User> getFollowers() {
         return followers;
@@ -193,5 +192,24 @@ public class User {
 
     public void setArticlesNumber(int articlesNumber) {
         this.articlesNumber = articlesNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + firstName + '\'' +
+                ", surname='" + lastName + '\'' +
+                ", nickname='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", emailVerified=" + emailVerified +
+                ", followingNumber=" + followingNumber +
+                ", followers=" + followers +
+                ", followersNumber=" + followersNumber +
+                ", articles=" + articles +
+                ", articlesNumber=" + articlesNumber +
+                ", reactionCounter=" + reactionCounter +
+                '}';
     }
 }

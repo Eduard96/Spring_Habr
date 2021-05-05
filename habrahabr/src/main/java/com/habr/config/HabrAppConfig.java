@@ -1,5 +1,9 @@
 package com.habr.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -12,6 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -22,25 +27,53 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import reactor.netty.http.client.HttpClient;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.validation.Validator;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ComponentScan("com.habr")
-@EnableWebMvc
+//@EnableWebMvc
 @EnableCaching
 @PropertySource("classpath:persistence.properties")
 @EnableJpaRepositories("com.habr.repository")
 @EnableTransactionManagement
+@EnableWebFlux
 public class HabrAppConfig implements WebMvcConfigurer  {
+
 
     @Autowired
     private Environment env;
+
+    private static final String BASE_URL = "http://localhost:8082";
+    public static final int TIMEOUT = 2000;
+
+    @Bean
+    public HttpClient httpClientConfig() {
+        return HttpClient
+                .create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
+                .doOnConnected(connection -> {
+                    connection.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+                    connection.addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
+                });
+    }
+
+    @Bean
+    public WebClient webClientWithTimeout() {
+        return WebClient.builder()
+                .baseUrl(BASE_URL)
+                .clientConnector(new ReactorClientHttpConnector(httpClientConfig()))
+                .build();
+    }
 
     @Bean
     public CacheManager cacheManager() {
@@ -48,8 +81,19 @@ public class HabrAppConfig implements WebMvcConfigurer  {
     }
 
     @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+    @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean
