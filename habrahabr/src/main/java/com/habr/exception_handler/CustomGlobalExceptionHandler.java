@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
@@ -69,6 +70,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler({HttpServerErrorException.class})
     public ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex) throws JsonProcessingException {
         return new ResponseEntity<>(parseExceptionMessage(Objects.requireNonNull(ex.getMessage())), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({WebClientResponseException.class})
+    public ResponseEntity<Object> handleWebClientResponseException(WebClientResponseException ex) throws JsonProcessingException {
+        return new ResponseEntity<>(parseExceptionMessage(Objects.requireNonNull(ex.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private JsonNode parseExceptionMessage(String msg) throws JsonProcessingException {

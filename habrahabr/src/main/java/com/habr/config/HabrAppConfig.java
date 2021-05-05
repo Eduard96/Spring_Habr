@@ -28,8 +28,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import reactor.netty.http.client.HttpClient;
 
@@ -41,12 +41,12 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ComponentScan("com.habr")
-//@EnableWebMvc
+@EnableWebMvc
 @EnableCaching
 @PropertySource("classpath:persistence.properties")
 @EnableJpaRepositories("com.habr.repository")
 @EnableTransactionManagement
-@EnableWebFlux
+//@EnableWebFlux
 public class HabrAppConfig implements WebMvcConfigurer  {
 
 
@@ -54,7 +54,7 @@ public class HabrAppConfig implements WebMvcConfigurer  {
     private Environment env;
 
     private static final String BASE_URL = "http://localhost:8082";
-    public static final int TIMEOUT = 2000;
+    public static final int TIMEOUT = 50000;
 
     @Bean
     public HttpClient httpClientConfig() {
@@ -74,6 +74,11 @@ public class HabrAppConfig implements WebMvcConfigurer  {
                 .clientConnector(new ReactorClientHttpConnector(httpClientConfig()))
                 .build();
     }
+
+//    @Bean
+//    public WebClient webClient() {
+//        return WebClient.builder().build();
+//    }
 
     @Bean
     public CacheManager cacheManager() {

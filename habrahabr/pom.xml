@@ -22,13 +22,11 @@
 
   <dependencies>
 
-      <!-- https://mvnrepository.com/artifact/io.projectreactor.netty/reactor-netty -->
       <dependency>
           <groupId>io.projectreactor.netty</groupId>
           <artifactId>reactor-netty</artifactId>
           <version>1.0.6</version>
       </dependency>
-
 
       <!--    <dependency>-->
 <!--      <groupId>junit</groupId>-->

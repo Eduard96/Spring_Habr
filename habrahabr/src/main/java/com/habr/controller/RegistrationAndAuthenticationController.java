@@ -1,16 +1,17 @@
 package com.habr.controller;
 
 import com.habr.dto.RegAuthUserDTO;
-import com.habr.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 /**
  * Last step
@@ -19,24 +20,29 @@ import java.util.Objects;
 @RequestMapping("/edobr.com")
 public class RegistrationAndAuthenticationController {
 
+    private final WebClient webClient;
+
     @Autowired
-    public RestTemplate restTemplate;
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody RegAuthUserDTO user) {
-        ResponseEntity<Object> registeredUser = restTemplate.exchange("http://localhost:8082/api/auth/signup", HttpMethod.POST, new HttpEntity<>(user), Object.class);
-        return ResponseEntity.ok(Objects.requireNonNull(registeredUser.getBody()));
+    public RegistrationAndAuthenticationController(WebClient webClient) {
+        this.webClient = webClient;
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestHeader RegAuthUserDTO headers) {
-        ResponseEntity<Object> regUser = restTemplate.exchange("http://localhost:8082/api/auth/signin", HttpMethod.POST, new HttpEntity<>(headers), Object.class);
-        return ResponseEntity.ok(Objects.requireNonNull(regUser.getBody()));
+
+    @PostMapping(value = "/signup")
+    public Mono<?> signup( @Valid @RequestBody RegAuthUserDTO user) {
+        return webClient.post()
+                .uri("/api/auth/signup")
+                .body(BodyInserters.fromValue(user))
+                .retrieve()
+                .bodyToMono(String.class);
     }
 
-    public static void f() {
-        User responseEntity = new RestTemplate().getForObject("http://localhost:8082/api/test/all/", User.class);
-        System.out.println(responseEntity.toString());
+    @PostMapping(value = "/signin", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<String> signin(@RequestBody RegAuthUserDTO user) {
+        return webClient.post()
+                .uri("/api/auth/signin")
+                .body(BodyInserters.fromValue(user))
+                .retrieve()
+                .bodyToMono(String.class);
     }
-
 }
