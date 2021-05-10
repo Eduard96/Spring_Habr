@@ -1,4 +1,4 @@
-package com.habr.util;
+package com.habr.utils;
 
 import org.modelmapper.ModelMapper;
 

@@ -1,11 +1,11 @@
-package com.habr.services;
+package com.habr.db_services;
 
 import com.habr.dto.ArticleDTO;
 import com.habr.dto.ReactionCounterDTO;
 import com.habr.model.Article;
 import com.habr.repository.ArticleRepository;
 import com.habr.repository.ReactionCounterRepository;
-import com.habr.util.ModelToDTO;
+import com.habr.utils.ModelToDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

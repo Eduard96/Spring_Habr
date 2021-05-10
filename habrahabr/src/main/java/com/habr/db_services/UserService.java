@@ -1,10 +1,10 @@
-package com.habr.services;
+package com.habr.db_services;
 
 import com.habr.dto.ArticleDTO;
-import com.habr.dto.UserDTO;
+import com.habr.dto.UserDTOToClient;
 import com.habr.model.User;
 import com.habr.repository.UserRepository;
-import com.habr.util.ModelToDTO;
+import com.habr.utils.ModelToDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -25,9 +25,9 @@ public class UserService {
     }
 
     @Cacheable("users")
-    public List<UserDTO> getAllUsers(int page, int size) {
+    public List<UserDTOToClient> getAllUsers(int page, int size) {
         List<User> users = userRepository.findAllBy(PageRequest.of(page, size));
-        return ModelToDTO.mapList(users, UserDTO.class);
+        return ModelToDTO.mapList(users, UserDTOToClient.class);
     }
 
     public User getUserById(Long id) {
@@ -36,14 +36,14 @@ public class UserService {
         return user;
     }
 
-    public List<UserDTO> getFollowing(Long id, int page, int size) {
+    public List<UserDTOToClient> getFollowing(Long id, int page, int size) {
         List<User> following = userRepository.findByFollowersId(id, PageRequest.of(page, size));
-        return ModelToDTO.mapList(following, UserDTO.class);
+        return ModelToDTO.mapList(following, UserDTOToClient.class);
     }
 
-    public List<UserDTO> getFollowers(Long id, int page, int size) {
+    public List<UserDTOToClient> getFollowers(Long id, int page, int size) {
         List<User> followers = userRepository.findByUserId(id, page, size);
-        return ModelToDTO.mapList(followers, UserDTO.class);
+        return ModelToDTO.mapList(followers, UserDTOToClient.class);
     }
 
     @Transactional

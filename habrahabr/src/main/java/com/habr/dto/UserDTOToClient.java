@@ -1,31 +1,34 @@
 package com.habr.dto;
 
-import javax.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Set;
 
-public class RegAuthUserDTO {
+public class UserDTOToClient implements Serializable {
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Firstname too short")
+    @Size(min = 3, max = 20, message = "Name Should be more than 2 and less than 25")
     private String firstName;
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Lastname too short")
+    @Size(min = 3, max = 20, message = "Surname Should be more than 2 and less than 25")
     private String lastName;
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Username too short")
+    @Size(min = 3, max = 20, message = "Nickname should be more than 5 and less than 30")
     private String userName;
 
+    @NotBlank(message = "email must not be empty")
     @Email
-    @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 20)
+    @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private Set<String> roles;
@@ -38,14 +41,6 @@ public class RegAuthUserDTO {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -54,18 +49,24 @@ public class RegAuthUserDTO {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        String temp = password;
-        password = null;
-        return temp;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
@@ -79,15 +80,5 @@ public class RegAuthUserDTO {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
-
-//    @Override
-//    public String toString() {
-//        return "{" +
-//                " \"firstName\":\"" + firstName + '\"' +
-//                ", \"lastName\":\"" + lastName + '\"' +
-//                ", \"userName\":\"" + userName + '\"' +
-//                ", \"password\":\"" + password + '\"' +
-//                ", \"roles\":[" + "\"user\"" +
-//                "]}";
-//    }
 }
+

@@ -15,7 +15,7 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     //I am using findAllBy instead of findAll to set return type List instead of Page
-    //Because JpaRepository or CrudRepository or PagingAndSortingRepository have this function
+    //Because JpaRepository and CrudRepository and PagingAndSortingRepository have this function
     //And we can't change just return type without changing rest of signature of function
     List<User> findAllBy(Pageable pageable);
 

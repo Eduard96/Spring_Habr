@@ -12,10 +12,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
@@ -27,8 +29,13 @@ import java.util.stream.Collectors;
 @ResponseBody
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private final Map<String, Object> body = new LinkedHashMap<>();
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    private ObjectMapper objectMapper;
+    public CustomGlobalExceptionHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     // error handle for @Valid
     @Override
@@ -54,12 +61,31 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     //setting for PathVariable error
     @ExceptionHandler({ConstraintViolationException.class})
     public final ResponseEntity<Object> handleConstraintViolation(Exception ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date().toString());
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("errors", ex.getMessage().substring(ex.getMessage().indexOf(':') + 1));
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler({NoHandlerFoundException.class})
+    public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex,HttpHeaders headers,
+                                                                HttpStatus status, WebRequest request) {
+        body.put("timestamp", new Date().toString());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("errors", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<Object> handleNullPointerException(RuntimeException ex) {
+        body.put("timestamp", new Date().toString());
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("errors", "Something went wrong");
+
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({HttpClientErrorException.class})

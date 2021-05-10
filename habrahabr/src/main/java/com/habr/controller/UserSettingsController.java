@@ -1,7 +1,7 @@
 package com.habr.controller;
 
 import com.habr.model.User;
-import com.habr.services.UserSettingsService;
+import com.habr.db_services.UserSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

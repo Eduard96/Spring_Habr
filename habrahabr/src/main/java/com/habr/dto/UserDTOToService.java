@@ -1,34 +1,31 @@
 package com.habr.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Set;
 
-public class UserDTO implements Serializable {
+public class UserDTOToService {
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Name Should be more than 2 and less than 25")
+    @Size(min = 3, max = 20, message = "Firstname too short")
     private String firstName;
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Surname Should be more than 2 and less than 25")
+    @Size(min = 3, max = 20, message = "Lastname too short")
     private String lastName;
 
     @NotBlank
-    @Size(min = 3, max = 20, message = "Nickname should be more than 5 and less than 30")
+    @Size(min = 3, max = 20, message = "Username too short")
     private String userName;
 
-    @NotBlank(message = "email must not be empty")
     @Email
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 20, message = "Should be more than 8 and less than 20")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Size(min = 8, max = 20)
     private String password;
 
     private Set<String> roles;
@@ -41,22 +38,6 @@ public class UserDTO implements Serializable {
         this.firstName = firstName;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getLastName() {
         return lastName;
     }
@@ -65,8 +46,26 @@ public class UserDTO implements Serializable {
         this.lastName = lastName;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getPassword() {
-        return password;
+        String temp = password;
+        password = null;
+        return temp;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
@@ -80,5 +79,15 @@ public class UserDTO implements Serializable {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
-}
 
+//    @Override
+//    public String toString() {
+//        return "{" +
+//                " \"firstName\":\"" + firstName + '\"' +
+//                ", \"lastName\":\"" + lastName + '\"' +
+//                ", \"userName\":\"" + userName + '\"' +
+//                ", \"password\":\"" + password + '\"' +
+//                ", \"roles\":[" + "\"user\"" +
+//                "]}";
+//    }
+}

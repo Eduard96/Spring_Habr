@@ -1,4 +1,4 @@
-package com.habr.services;
+package com.habr.db_services;
 
 import com.habr.model.User;
 import com.habr.repository.UserRepository;

@@ -3,7 +3,7 @@ package com.habr.controller;
 import com.habr.dto.ArticleDTO;
 import com.habr.dto.ReactionCounterDTO;
 import com.habr.model.Article;
-import com.habr.services.ArticleService;
+import com.habr.db_services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
